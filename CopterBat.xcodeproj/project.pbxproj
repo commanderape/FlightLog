@@ -304,6 +304,7 @@
 				5B87DB7D1D8B038100336800 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
