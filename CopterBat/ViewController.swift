@@ -11,44 +11,28 @@ import CoreData
 
 class ViewController: UIViewController,UITableViewDataSource {
 
+    @IBOutlet weak var tableView: UITableView!
+    
     //Replace both UITableViewDataSource methods
-    func tableView(_ tableView: UITableView,
-                   numberOfRowsInSection section: Int) -> Int {
-        return people.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return batteries.count
     }
     
-    func tableView(_ tableView: UITableView,
-                   cellForRowAt
-        indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell =
-            tableView.dequeueReusableCell(withIdentifier: "Cell")
-        
-        let person = people[indexPath.row]
-        
-        cell!.textLabel!.text =
-            person.value(forKey: "name") as? String
-        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
+        let battery = batteries[indexPath.row]
+        cell!.textLabel!.text = battery.value(forKey: "name") as? String
         return cell!
     }
     
     func saveName(name: String) {
-        
         let managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        
-        //2
-        let entity =  NSEntityDescription.entity(forEntityName: "Person", in:managedContext)
-        
-        let person = NSManagedObject(entity: entity!, insertInto: managedContext)
-        
-        //3
-        person.setValue(name, forKey: "name")
-        
-        //4
+        let entity =  NSEntityDescription.entity(forEntityName: "battery", in:managedContext)
+        let battery = NSManagedObject(entity: entity!, insertInto: managedContext)
+        battery.setValue(name, forKey: "name")
         do {
             try managedContext.save()
-            //5
-            people.append(person)
+            batteries.append(battery)
         } catch let error as NSError  {
             print("Could not save \(error), \(error.userInfo)")
         }
@@ -56,36 +40,28 @@ class ViewController: UIViewController,UITableViewDataSource {
     
     @IBAction func addName(_ sender: AnyObject) {
         
-        let alert = UIAlertController(title: "Name:",
-                                      message: "Füge einen neuen Namen hinzu:",
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(title: "Name:", message: "Füge einen neuen Namen hinzu:", preferredStyle: .alert)
+        let saveAction = UIAlertAction(
+            title: "Speichern", style: .default, handler:
+            {
+                (
+                    action:UIAlertAction) -> Void in
+                    let textField = alert.textFields!.first
+                    self.saveName(name: textField!.text!
+                )
+            self.tableView.reloadData()
+            }
+        )
         
-        
-        let saveAction = UIAlertAction(title: "Speichern",
-                                       style: .default,
-                                       handler: { (action:UIAlertAction) -> Void in
-                                        
-                                        let textField = alert.textFields!.first
-                                        self.saveName(name: textField!.text!)
-                                        self.tableView.reloadData()
-        })
-        
-        let cancelAction = UIAlertAction(title: "Abbrechen",
-                                         style: .default) { (action: UIAlertAction) -> Void in
-        }
-        
-        alert.addTextField {
-            (textField: UITextField) -> Void in
-        }
-        
+        let cancelAction = UIAlertAction(title: "Abbrechen", style: .default) { (action: UIAlertAction) -> Void in }
+        alert.addTextField {(textField: UITextField) -> Void in}
         alert.addAction(saveAction)
         alert.addAction(cancelAction)
-        
         present(alert, animated: true, completion: nil)
     }
     
-    @IBOutlet weak var tableView: UITableView!
-    var people = [NSManagedObject]()
+
+    var batteries = [NSManagedObject]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,21 +76,12 @@ class ViewController: UIViewController,UITableViewDataSource {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        //1
         let managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
-        //2
-        //let fetchRequest = NSFetchRequest(entityName: "Person")
-        //let fetchRequest: NSFetchRequest<Person> = Person.fetchRequest()
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Person")
-
-        
-        //3
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "battery")
         do {
             let results =
                 try managedContext.fetch(fetchRequest)
-            people = results as! [NSManagedObject]
+                    batteries = results as! [NSManagedObject]
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
