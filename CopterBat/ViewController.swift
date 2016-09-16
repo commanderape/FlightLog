@@ -38,7 +38,6 @@ class ViewController: UIViewController,UITableViewDataSource {
         //let managedContext = appDelegate.managedObjectContext
         
         let managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        NSLog(managedContext.nil?)
         
         //2
         let entity =  NSEntityDescription.entity(forEntityName: "Person", in:managedContext)
