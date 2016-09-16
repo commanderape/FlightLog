@@ -33,9 +33,6 @@ class ViewController: UIViewController,UITableViewDataSource {
     }
     
     func saveName(name: String) {
-        //1
-        //let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        //let managedContext = appDelegate.managedObjectContext
         
         let managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
@@ -59,8 +56,8 @@ class ViewController: UIViewController,UITableViewDataSource {
     
     @IBAction func addName(_ sender: AnyObject) {
         
-        let alert = UIAlertController(title: "New Name",
-                                      message: "Add a new name",
+        let alert = UIAlertController(title: "Name:",
+                                      message: "Füge einen neuen Namen hinzu:",
                                       preferredStyle: .alert)
         
         
@@ -101,8 +98,27 @@ class ViewController: UIViewController,UITableViewDataSource {
         // Dispose of any resources that can be recreated.
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        //1
+        let managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
+        //2
+        //let fetchRequest = NSFetchRequest(entityName: "Person")
+        //let fetchRequest: NSFetchRequest<Person> = Person.fetchRequest()
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Person")
 
-
+        
+        //3
+        do {
+            let results =
+                try managedContext.fetch(fetchRequest)
+            people = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+    }
+    
 }
 
